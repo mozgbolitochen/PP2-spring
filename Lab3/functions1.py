@@ -161,7 +161,7 @@ print("###")
 def Game_Of_LIFEE(a=1,b=20):
 
     Play = True
-    ran = random.randint(a,b))
+    ran = random.randint(a,b)
     Name = input("Hello! What is your name?\n")
     tag = '\nTake a guess.\n'
     message = f'Well, {Name}, i am thinking between number {a} and {b}'
