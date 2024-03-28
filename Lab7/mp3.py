@@ -1,83 +1,87 @@
-from tkinter import *
-import tkinter as tk
-from tkinter import filedialog
-from pygame import mixer
+import pygame
 import os
+playing = False
 
-
-class MP:
-    def __init__(self, win):
-        # создаем окно с помощью ткинтера
-        win.geometry('600x100')
-        win.title('Music Player')
-        win.resizable(0, 0)
-
-        # StringVar to change button text later
-        self.play_restart = tk.StringVar()
-        self.pause_resume = tk.StringVar()
-        self.play_restart.set('Play')
-        self.pause_resume.set('Pause')
-
-        # настройки баттонов
-        load_button = Button(win, text='Load', width=10, font=('Arial', 15), command=self.load)
-        load_button.place(x=50, y=40)
-
-        play_button = Button(win, textvariable=self.play_restart, width=10, font=('Arial', 15), command=self.play)
-        play_button.place(x=150, y=40)
-
-        pause_button = Button(win, textvariable=self.pause_resume, width=10, font=('Arial', 15), command=self.pause)
-        pause_button.place(x=250, y=40)
-
-        previous_button = Button(win, text='Previous', width=10, font=('Arial', 15), command=self.previous_track)
-        previous_button.place(x=350, y=40)
-
-        next_button = Button(win, text='Next', width=10, font=('Arial', 15), command=self.next_track)
-        next_button.place(x=450, y=40)
-
-        self.music_files = []
-        self.current_track_index = 0
-        self.playing_state = False
-
-    def load(self):
-        folder_path = filedialog.askdirectory()
-        if folder_path:
-            self.music_files = [os.path.join(folder_path, file) for file in os.listdir(folder_path) if file.endswith('.mp3')]
-            print("Loaded: ", self.music_files)
-            self.play_restart.set('Play')
-
-    def play(self):
-        if self.music_files:
-            mixer.init()
-            mixer.music.load(str(self.music_files[self.current_track_index]))
-            mixer.music.play()
-            self.playing_state = False
-            self.play_restart.set('Restart')
-            self.pause_resume.set('Pause')
-
-    def pause(self):
-        if not self.playing_state:
-            mixer.music.pause()
-            self.playing_state = True
-            self.pause_resume.set('Resume')
+def play_song(ind,this = False):
+    global playing
+    if this:
+        if playing:
+            pygame.mixer.music.pause()
+            playing = not playing
         else:
-            mixer.music.unpause()
-            self.playing_state = False
-            self.pause_resume.set('Pause')
-
-    def stop(self):
-        mixer.music.stop()
-
-    def previous_track(self):
-        if self.music_files:
-            self.current_track_index = (self.current_track_index - 1) % len(self.music_files)
-            self.play()
-
-    def next_track(self):
-        if self.music_files:
-            self.current_track_index = (self.current_track_index + 1) % len(self.music_files)
-            self.play()
+            pygame.mixer.music.unpause()
+            playing = not playing
+    else:
+        pygame.mixer.music.load(songs[ind])
+        pygame.mixer.music.play()
+        playing = True
 
 
-root = Tk()
-MP(root)
-root.mainloop()
+pygame.init()
+
+
+HEIGHT, WEIGHT = 600, 600
+screen = pygame.display.set_mode((HEIGHT, WEIGHT))
+screen.fill((255, 255, 255))
+pygame.display.set_caption("My first game")
+
+
+f = pygame.font.Font(None, 36)
+text1 = f.render('PLAY - Space', True, (0, 0, 0))
+text2 = f.render('STOP - s', True, (0, 0, 0))
+text3 = f.render('NEXT - n', True, (0, 0, 0))
+text4 = f.render('PREVIOUS - p', True, (0, 0, 0))
+text5 = f.render('START - q', True, (0, 0, 0))
+
+
+screen.blit(text1, (10, 50))
+screen.blit(text2, (10, 100))
+screen.blit(text3, (10, 150))
+screen.blit(text4, (10, 200))
+screen.blit(text5, (10, 250))
+
+pygame.display.update()
+songs = []
+ind = 0
+directory = r"/home/ruslan/Music"
+
+for filename in os.listdir(directory):
+    f = os.path.join(directory, filename)
+    if os.path.isfile(f) and filename.endswith('.mp3'):
+        songs.append(f)
+print(songs)
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                play_song(ind,True)
+            if event.key == pygame.K_q:
+                play_song(ind)
+            if event.key == pygame.K_s:
+                pygame.mixer.music.stop()
+                playing = False
+            if event.key == pygame.K_n:
+                if ind < len(songs) - 1:
+                    ind += 1
+                    if playing:
+                        play_song(ind)
+
+                else:
+                    ind = 0
+                    if playing:
+                        play_song(ind)
+            if  event.key == pygame.K_p:
+                if ind > 0:
+                    ind -= 1
+                    if playing:
+                        play_song(ind)
+                else:
+                    ind = len(songs)-1
+                    if playing:
+                        play_song(ind)
+            if event.key == pygame.K_ESCAPE:
+                running = False
