@@ -27,7 +27,7 @@ pygame.display.set_caption("My first game")
 
 
 f = pygame.font.Font(None, 36)
-text1 = f.render('PLAY - Space', True, (0, 0, 0))
+text1 = f.render('PAUSEE - Space', True, (0, 0, 0))
 text2 = f.render('STOP - s', True, (0, 0, 0))
 text3 = f.render('NEXT - n', True, (0, 0, 0))
 text4 = f.render('PREVIOUS - p', True, (0, 0, 0))
