@@ -1,5 +1,6 @@
 import pygame  # Importing pygame library
 import math
+import colors as clr
 pygame.init()  # Initializing pygame
 
 # Setting up some useful constants
@@ -41,7 +42,10 @@ def calculate_rect(x1, y1, x2, y2):
 def calculate_equilateral_triangle(x1, y1, x2, y2):
     side_length = abs(x2 - x1)  # Calculate side length based on mouse positions
     height = int(side_length * (3 ** 0.5) / 2)  # Calculate height of equilateral triangle
-    return ((x1, y1), ((x1 + x2) // 2, y1 - height), (x2, y1))  # Return vertices of triangle
+    if y1<y2:
+        return ((x1, y1), ((x1 + x2) // 2, y1 + height), (x2, y1))  # Return vertices of triangle
+    else:
+        return ((x1, y1), ((x1 + x2) // 2, y1 - height), (x2, y1))  # Return vertices of triangle
 
 def draw_rhombus(screen, color, rect):
     points = [rect.midtop, rect.midright, rect.midbottom, rect.midleft]
@@ -87,14 +91,14 @@ while not done:
                 elif mode == "rhombus":
                     rect1 = calculate_rect(prevX, prevY, currX, currY)
                     draw_rhombus(screen, color_mode, rect1)
-                elif mode == "sguare":
+                elif mode == "square":
                     # Calculate the coordinates for the square based on mouse positions
                     top_left = (min(prevX, currX), min(prevY, currY))
                     side_length = min(abs(currX - prevX), abs(currY - prevY))
                     # Draw the square using the calculated coordinates
                     pygame.draw.rect(screen, color_mode, (top_left[0], top_left[1], side_length, side_length), THICKNESS)
                 elif mode == "eraser":
-                    pygame.draw.circle(screen, (255, 255, 255), (currX, currY), THICKNESS)
+                    pygame.draw.circle(screen, color_mode, (currX, currY), THICKNESS)
                     base_layer.blit(screen, (0, 0))  # Update base layer for eraser mode
 
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
@@ -121,7 +125,7 @@ while not done:
                 rect1 = calculate_rect(prevX, prevY, currX, currY)
                 draw_rhombus(screen, color_mode, rect1)
                 base_layer.blit(screen, (0, 0))
-            elif mode == "sguare":
+            elif mode == "square":
                 # Calculate the coordinates for the square based on mouse positions
                 top_left = (min(prevX, currX), min(prevY, currY))
                 side_length = min(abs(currX - prevX), abs(currY - prevY))
@@ -142,7 +146,7 @@ while not done:
             # Change drawing mode based on key press (rectangle, circle, right triangle, equilateral triangle, eraser)
             if event.key == pygame.K_c:
                 mode = "circle"
-            if event.key == pygame.K_r:
+            if event.key == pygame.K_r and not shift_held:
                 mode = "rectangle"
             if event.key == pygame.K_t:
                 mode = "righttriangle"
@@ -152,18 +156,19 @@ while not done:
                 mode = "rhombus"
             if event.key == pygame.K_e:
                 mode = "eraser"
+                color_mode = colorWHITE
             if event.key == pygame.K_s:
-                mode = "sguare"
+                mode = "square"
 
             # Change drawing color based on key press (red, blue, green, black)
             if event.key == pygame.K_r and shift_held:
-                color_mode = "red"
+                color_mode = clr.colorRED
             if event.key == pygame.K_b and shift_held:
-                color_mode = "blue"
+                color_mode = clr.colorBLUE
             if event.key == pygame.K_g and shift_held:
-                color_mode = "green"
+                color_mode = clr.colorGREEN
             if event.key == pygame.K_k and shift_held:
-                color_mode = "black"
+                color_mode = clr.colorBLACK
             
 
     pygame.display.flip()  # Update the display

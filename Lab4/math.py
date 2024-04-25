@@ -7,7 +7,7 @@ def rad(n):
 
 def trap(h,base,Base):
     return (base+Base)/2*h
-# print(trap(5,5,6))
+print(trap(5,5,6))
 
 #########################
 

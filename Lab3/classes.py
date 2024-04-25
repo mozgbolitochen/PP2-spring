@@ -27,6 +27,18 @@ class rectangle(shape):
         self.width = width
         self.area = length*width
 
+class Circle(shape):
+    def __init__(self,radius) -> None:
+        self.radius = radius
+        self.area = math.pi*(radius**2)
+    def AreaCircle(self):
+        print(math.pi*(self.radius**2))
+    
+circle = Circle(int(input()))
+circle.AreaCircle()
+    
+
+
 class point:
     def __init__(self,x,y) -> None:
         self.x = x
@@ -69,4 +81,4 @@ numbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 prime_numbers = list(filter(lambda x: prime(x), numbers))
 
 
-print("Prime numbers:", prime_numbers)
+# print("Prime numbers:", prime_numbers)
