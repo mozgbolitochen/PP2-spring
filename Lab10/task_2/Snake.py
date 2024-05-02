@@ -1,13 +1,42 @@
 import pygame
 import random
 import time
+import psycopg2
+import os
 import colors as clr 
 c = 20
+name = str(input("Enter your name: "))
 pygame.init()
 
 colors = [(240,240,240),(255,255,255)]
 food_stash = []
 fps = 2
+password = r"WEy)pb%b"
+def adding_user(name, score):
+    conn = psycopg2.connect(
+        host="localhost",
+        dbname="Snake_players",
+        user="postgres",
+        password=password,
+        port=5432
+    )
+    command1 = """SELECT level FROM users WHERE name = %s;"""
+    command2 = """INSERT INTO users (name, level)
+            VALUES (%s, %s);"""
+    command3 = """INSERT INTO users_score (name, score)
+                VALUES (%s, %s);"""
+    conn.autocommit = True
+    cursor = conn.cursor()
+    cursor.execute(command1, (name,))
+    level = cursor.fetchone()
+    if level:
+        print(f"Welcome back, {name}! Your current level is {level[0]}.")
+    else:
+        cursor.execute(command2, (name, 1))
+    cursor.execute(command3, (name, score))
+    cursor.close()
+    conn.close()
+
 #class for defining position of objects
 class point:
     def __init__(self,x,y):
@@ -81,6 +110,18 @@ class food:
         self.__init__(self.color,snk)
 
 
+def pause():
+    paused = True
+    while paused:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:  # Resume on pressing ESC key again
+                    paused = False
+                    break
+                elif event.key == pygame.K_RETURN:  # Save state and score to DB on pressing Enter
+                    adding_user(name, score)
+        pygame.time.delay(100)  
+
 scr = pygame.display.set_mode((640,540))
 
 work = True
@@ -100,6 +141,8 @@ while work:
                 pygame.quit()
                 work = False
                 break
+            if EVEEENT.key == pygame.K_p:
+                pause()
             if EVEEENT.key == pygame.K_SPACE:
                 pass
             if EVEEENT.key == pygame.K_a:
@@ -141,3 +184,6 @@ else:
     scr.blit(GO_text,(125,225))
     pygame.display.flip()
     time.sleep(3)
+    adding_user(name, score)
+
+
