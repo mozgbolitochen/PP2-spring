@@ -1,15 +1,13 @@
 import psycopg2
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
+import math
 
 def query_contacts():
     conn = psycopg2.connect(
         host="localhost",
         dbname="PhoneBook",
         user="postgres",
-        password=os.getenv("PASSWORD"),
+        password="808",
         port=5432
     )
     cur = conn.cursor()

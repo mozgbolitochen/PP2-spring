@@ -1,14 +1,12 @@
 import psycopg2
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
+import math
 
 def delete_contact_by_name(name):
     conn = psycopg2.connect(
         dbname="PhoneBook",
         user="postgres",
-        password=os.getenv("PASSWORD"),
+        password="808",
         host="localhost"
     )
     cur = conn.cursor()

@@ -11,29 +11,20 @@ pygame.init()
 colors = [(240,240,240),(255,255,255)]
 food_stash = []
 fps = 2
-password = r"WEy)pb%b"
-def adding_user(name, score):
+password = r"808"
+def adding_user(name,level, score):
     conn = psycopg2.connect(
         host="localhost",
-        dbname="Snake_players",
+        dbname="snake_players",
         user="postgres",
         password=password,
         port=5432
     )
-    command1 = """SELECT level FROM users WHERE name = %s;"""
-    command2 = """INSERT INTO users (name, level)
-            VALUES (%s, %s);"""
-    command3 = """INSERT INTO users_score (name, score)
-                VALUES (%s, %s);"""
+    command = """INSERT INTO users (username, level, score)
+            VALUES (%s, %s, %s);"""
     conn.autocommit = True
     cursor = conn.cursor()
-    cursor.execute(command1, (name,))
-    level = cursor.fetchone()
-    if level:
-        print(f"Welcome back, {name}! Your current level is {level[0]}.")
-    else:
-        cursor.execute(command2, (name, 1))
-    cursor.execute(command3, (name, score))
+    cursor.execute(command, (name, level,score))
     cursor.close()
     conn.close()
 
@@ -184,6 +175,6 @@ else:
     scr.blit(GO_text,(125,225))
     pygame.display.flip()
     time.sleep(3)
-    adding_user(name, score)
+    adding_user(name,snakc.lvl, snakc.score)
 
 
